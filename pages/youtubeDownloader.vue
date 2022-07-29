@@ -6,26 +6,30 @@
             </b-input>
             <b-form-select class="form-components" v-model="selected" :options="options"></b-form-select>
             <b-button class="form-components" @click.prevent="searchUrl" variant="outline-primary">SEARCH</b-button>
-            <div class="p-1" v-if="fetchedAudios.length > 0">
-                <h4>Audios</h4>
-                <div class="d-inline-flex p-2" v-for="(item, index) in fetchedAudios" :key="index">
-                    <a class="makeButton" :href="item.link" download>
-                        <i class="fa fa-download" aria-hidden="true"></i>
-                        {{item.audio_quality}}
-                    </a>
+            <div v-if="status == 0" class="text-center">Search now</div>
+            <div v-if="status == 2">
+                <div class="p-1" v-if="fetchedAudios.length > 0">
+                    <h4>Audios</h4>
+                    <div class="d-inline-flex p-2" v-for="(item, index) in fetchedAudios" :key="index">
+                        <a class="makeButton" :href="item.link" download>
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                            {{item.audio_quality}}
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="text-center" v-else>No Audios.</div>
-            <div class="p-1" v-if="fetchedVideos.length > 0">
-                <h4>Videos</h4>
-                <div class="d-inline-flex p-2" v-for="(item, index) in fetchedVideos" :key="index">
-                    <a class="makeButton" :href="item.link" download>
-                        <i class="fa fa-download" aria-hidden="true"></i>
-                        {{item.video_quality}}
-                    </a>
+                <div class="text-center" v-else>No Audios.</div>
+                <div class="p-1" v-if="fetchedVideos.length > 0">
+                    <h4>Videos</h4>
+                    <div class="d-inline-flex p-2" v-for="(item, index) in fetchedVideos" :key="index">
+                        <a class="makeButton" :href="item.link" download>
+                            <i class="fa fa-download" aria-hidden="true"></i>
+                            {{item.video_quality}}
+                        </a>
+                    </div>
                 </div>
+                <div class="text-center" v-else>No Videos.</div>
             </div>
-            <div class="text-center" v-else>No Videos.</div>
+            <div class="text-center" v-if="status == 1">Searching</div>
         </div>
     </div>
 </template>
@@ -37,6 +41,7 @@ export default {
     data() {
         return {
             typeTimer: null,
+            status: 0,
             youtube_url: null,
             selected: 'all',
             fetchedAudios: [],
@@ -57,7 +62,8 @@ export default {
     },
     methods: {
         async searchUrl() {
-            try {
+            try { 
+                this.status = 1
                 this.fetchedAudios = this.fetchedVideos = []
                 const url = `https://ytd-api-dev.herokuapp.com/api/get-data?yt_url=${this.youtube_url}&type=${this.selected}`
                 const resp = await this.$axios.get(url)
@@ -67,6 +73,7 @@ export default {
                 if (resp?.data?.data?.video) {
                     this.fetchedVideos = resp.data.data.video
                 }
+                this.status = 2
             } catch (error) {
                 console.log(error);
             }
