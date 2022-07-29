@@ -11,20 +11,14 @@
                 <div class="p-1" v-if="fetchedAudios.length > 0">
                     <h4>Audios</h4>
                     <div class="d-inline-flex p-2" v-for="(item, index) in fetchedAudios" :key="index">
-                        <a class="makeButton" :href="item.link" download>
-                            <i class="fa fa-download" aria-hidden="true"></i>
-                            {{item.audio_quality}}
-                        </a>
+                        <a class="makeButton" :href="item.link"><i class="fa fa-download" aria-hidden="true"></i> {{item.audio_quality}}</a>
                     </div>
                 </div>
                 <div class="text-center" v-else>No Audios.</div>
                 <div class="p-1" v-if="fetchedVideos.length > 0">
                     <h4>Videos</h4>
                     <div class="d-inline-flex p-2" v-for="(item, index) in fetchedVideos" :key="index">
-                        <a class="makeButton" :href="item.link" download>
-                            <i class="fa fa-download" aria-hidden="true"></i>
-                            {{item.video_quality}}
-                        </a>
+                        <a class="makeButton" :href="item.link"><i class="fa fa-download" aria-hidden="true"></i> {{item.video_quality}}</a>
                     </div>
                 </div>
                 <div class="text-center" v-else>No Videos.</div>
@@ -65,8 +59,10 @@ export default {
             try { 
                 this.status = 1
                 this.fetchedAudios = this.fetchedVideos = []
+                // const url = `http://localhost:3006/api/get-data?yt_url=${this.youtube_url}&type=${this.selected}`
                 const url = `https://ytd-api-dev.herokuapp.com/api/get-data?yt_url=${this.youtube_url}&type=${this.selected}`
                 const resp = await this.$axios.get(url)
+                console.log(resp);
                 if (resp?.data?.data?.audio) {
                     this.fetchedAudios = resp.data.data.audio
                 } 
@@ -77,7 +73,8 @@ export default {
             } catch (error) {
                 console.log(error);
             }
-        }
+        }, 
+        
     }
 }
 </script>
