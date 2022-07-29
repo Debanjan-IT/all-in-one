@@ -15,6 +15,7 @@
                     </a>
                 </div>
             </div>
+            <div class="text-center" v-else>No Audios.</div>
             <div class="p-1" v-if="fetchedVideos.length > 0">
                 <h4>Videos</h4>
                 <div class="d-inline-flex p-2" v-for="(item, index) in fetchedVideos" :key="index">
@@ -24,6 +25,7 @@
                     </a>
                 </div>
             </div>
+            <div class="text-center" v-else>No Videos.</div>
         </div>
     </div>
 </template>
@@ -57,20 +59,13 @@ export default {
         async searchUrl() {
             try {
                 this.fetchedAudios = this.fetchedVideos = []
-                if (this.youtube_url.includes('https://www.youtube.com/watch?v=')) {
-                    const url = `https://ytd-api-dev.herokuapp.com/api/get-data?yt_url=${this.youtube_url}&type=${this.selected}`
-                    const resp = await this.$axios.get(url)
-                    if (resp?.data?.data?.audio) {
-                        this.fetchedAudios = resp.data.data.audio
-                    } 
-                    if (resp?.data?.data?.video) {
-                        this.fetchedVideos = resp.data.data.video
-                    }
-                } else { 
-                    this.$bvToast.toast(`Enter a valid URL.`, {
-                        variant: 'danger',
-                        autoHideDelay: 5000,
-                    })
+                const url = `https://ytd-api-dev.herokuapp.com/api/get-data?yt_url=${this.youtube_url}&type=${this.selected}`
+                const resp = await this.$axios.get(url)
+                if (resp?.data?.data?.audio) {
+                    this.fetchedAudios = resp.data.data.audio
+                } 
+                if (resp?.data?.data?.video) {
+                    this.fetchedVideos = resp.data.data.video
                 }
             } catch (error) {
                 console.log(error);
